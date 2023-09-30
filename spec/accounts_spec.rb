@@ -1,10 +1,13 @@
 require 'active_record'
 require 'rspec'
-
 require_relative './pg_shared_context'
 
 describe 'Postgresql :read_committed transaction isolation level' do
-  include_context 'Database initialization and connection test'
+  include_context 'Database initialization'
+
+  it 'Returns list of database tables' do
+    expect(::ActiveRecord::Base.connection.tables).to be_present
+  end
 
   context 'First, lets fill out the accounts table.' do
     before do
@@ -46,6 +49,24 @@ describe 'Postgresql :read_committed transaction isolation level' do
         SQL
 
         expect(result.first['default_transaction_isolation']).to eq 'read committed'
+      end
+
+      context 'When we withdraw funds from the account in an open transaction' do
+        before do
+          exec_sql <<~SQL
+            UPDATE accounts SET amount = amount - 200 WHERE id = 1;
+          SQL
+        end
+
+        context 'But do not record the changes' do
+          it 'The transaction always sees its own changes' do
+            result = exec_sql <<~SQL
+              SELECT amount FROM accounts WHERE client = 'alice'
+            SQL
+
+            expect(result.first['amount']).to eq 800
+          end
+        end
       end
     end
   end

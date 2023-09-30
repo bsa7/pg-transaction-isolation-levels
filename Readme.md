@@ -3,12 +3,12 @@
 ## To prepare do:
 
 ```bash
-gem install activerecord
-gem install rspec
+docker-compose up -d
+bundle install
 ```
 
 ## To run examples:
 
 ```bash
-rspec read_committed_spec.rb
+rspec
 ```
