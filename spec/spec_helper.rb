@@ -45,5 +45,6 @@ RSpec.configure do |config|
 
   config.before(:each) do
     initialize_table
+    populate_accounts_table
   end
 end
