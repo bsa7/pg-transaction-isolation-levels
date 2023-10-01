@@ -30,4 +30,4 @@ bundle exec rspec spec/read_committed/dirty_read_spec.rb
 * [spec/accounts_spec.rb](spec/accounts_spec.rb) - This spec checks that the connection to the database is established and the accounts table contains data.
 * [spec/read_committed/dirty_read_spec.rb](spec/read_committed/dirty_read_spec.rb) - This spec demonstrates dirty reads allowed at the read committed isolation level.
 * [spec/read_committed/unconsistent_read_spec.rb](spec/read_committed/unconsistent_read_spec.rb) - This spec demonstrates unconsistent reads at the read committed isolation level.
-* [spec/read_committed/lost_update_read_spec.rb](spec/read_committed/lost_update_read_spec.rb) - This spec demonstrates lost update problem at the read committed isolation level.
+* [spec/read_committed/lost_update_spec.rb](spec/read_committed/lost_update_spec.rb) - This spec demonstrates lost update problem at the read committed isolation level.
