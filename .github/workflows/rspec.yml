@@ -1,0 +1,50 @@
+name: CI
+
+on: [push]
+
+jobs:
+  rspec:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ruby:3.1.2
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pg_isolation_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Gem cache
+        id: cache-bundle
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: bundle-${{ hashFiles('**/Gemfile.lock') }}
+
+      - name: Bundle install
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
+
+      - name: Run tests
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pg_isolation_test
+          POSTGRES_HOST: '0.0.0.0'
+          POSTGRES_PORT: ${{ job.services.postgres.ports['5432'] }}
+        run: |
+          bundle exec rspec

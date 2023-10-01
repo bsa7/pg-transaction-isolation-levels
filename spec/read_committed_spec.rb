@@ -1,10 +1,8 @@
 require 'active_record'
 require 'rspec'
-require_relative './pg_shared_context'
+require_relative './spec_helper.rb'
 
 describe 'Postgresql :read_committed transaction isolation level' do
-  include_context 'Database initialization'
-
   before do
     populate_accounts_table
   end
@@ -33,6 +31,14 @@ describe 'Postgresql :read_committed transaction isolation level' do
       end
 
       Thread.current[:result] = result.first
+    end
+
+    it 'Shows the current transaction isolation level' do
+      result = exec_sql <<~SQL
+        SHOW transaction_isolation;
+      SQL
+
+      expect(result.first['transaction_isolation']).to eq 'read committed'
     end
 
     it 'The second transaction does not see the changes made by the first transaction', use_transactions: false do

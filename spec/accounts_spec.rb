@@ -1,10 +1,8 @@
 require 'active_record'
 require 'rspec'
-require_relative './pg_shared_context'
+require_relative './spec_helper.rb'
 
 describe 'Postgresql :read_committed transaction isolation level' do
-  include_context 'Database initialization'
-
   it 'Returns list of database tables' do
     expect(::ActiveRecord::Base.connection.tables).to be_present
   end
@@ -33,14 +31,6 @@ describe 'Postgresql :read_committed transaction isolation level' do
         exec_sql <<~SQL
           COMMIT;
         SQL
-      end
-
-      it 'Shows the current transaction isolation level' do
-        result = exec_sql <<~SQL
-          SHOW transaction_isolation;
-        SQL
-
-        expect(result.first['transaction_isolation']).to eq 'read committed'
       end
 
       it 'Shows the current default transaction isolation level' do
