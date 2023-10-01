@@ -4,7 +4,7 @@ require_relative '../spec_helper'
 require_relative '../shared_examples'
 require_relative './read_committed_helper'
 
-describe 'Postgresql :read_committed transaction isolation level' do
+describe 'Postgresql :read_committed transaction isolation level - dirty read problem' do
   context 'When we start two competitive transactions' do
     include ReadCommittedHelper
 
