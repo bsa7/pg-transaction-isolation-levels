@@ -2,16 +2,12 @@ require 'active_record'
 require 'rspec'
 require_relative './spec_helper.rb'
 
-describe 'Postgresql :read_committed transaction isolation level' do
+describe 'Postgresql - verifiy that database and accounts table is working as expected' do
   it 'Returns list of database tables' do
     expect(::ActiveRecord::Base.connection.tables).to be_present
   end
 
   context 'First, lets fill out the accounts table.' do
-    before do
-      populate_accounts_table
-    end
-
     it 'Returns the amount in Bobs accounts' do
       result = exec_sql <<~SQL
         SELECT SUM(amount) FROM accounts WHERE client = 'bob' GROUP BY client
