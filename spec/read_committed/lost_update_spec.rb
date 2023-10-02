@@ -1,9 +1,11 @@
 require_relative '../spec_helper'
 
 describe 'Postgresql :read_committed transaction isolation level - lost update problem' do
+  let(:isolation) { :read_committed }
+
   context 'When we start two competitive transactions' do
     def first_transaction
-      transaction do
+      transaction(isolation:) do
         result = exec_sql <<~SQL
           SELECT amount FROM accounts WHERE id = 1;
         SQL
@@ -19,7 +21,7 @@ describe 'Postgresql :read_committed transaction isolation level - lost update p
     end
 
     def second_transaction
-      transaction do
+      transaction(isolation:) do
         result = exec_sql <<~SQL
           SELECT amount FROM accounts WHERE id = 1;
         SQL
