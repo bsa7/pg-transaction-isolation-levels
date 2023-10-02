@@ -1,22 +1,13 @@
-require 'active_record'
-require 'rspec'
 require_relative '../spec_helper'
-require_relative '../shared_examples'
-require_relative './read_committed_helper'
 
 describe 'Postgresql :read_committed transaction isolation level - dirty read problem' do
   context 'When we start two competitive transactions' do
-    include ReadCommittedHelper
-
     def second_transaction
-      result = nil
-      ActiveRecord::Base.transaction do
-        result = exec_sql <<~SQL
+      transaction do
+        exec_sql <<~SQL
           SELECT amount FROM accounts WHERE client = 'alice';
         SQL
       end
-
-      Thread.current[:result] = result.first
     end
 
     it_behaves_like 'Shows the current transaction isolation level' do
