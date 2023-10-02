@@ -1,9 +1,11 @@
 require_relative '../spec_helper'
 
 describe 'Postgresql :read_committed transaction isolation level - unrepeatable read problem' do
+  let(:isolation) { :read_committed }
+
   context 'When we start two competitive transactions' do
     def second_transaction
-      transaction do
+      transaction(isolation:) do
         result = exec_sql <<~SQL
           SELECT amount FROM accounts WHERE client = 'alice';
         SQL

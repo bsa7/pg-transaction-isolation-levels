@@ -1,9 +1,11 @@
 require_relative '../spec_helper'
 
 describe 'Postgresql :read_committed transaction isolation level - unconsistent read problem' do
+  let(:isolation) { :read_committed }
+
   context 'When we start two competitive transactions' do
     def first_transaction
-      transaction do
+      transaction(isolation:) do
         exec_sql <<~SQL
           UPDATE accounts SET amount = amount - 100 WHERE id = 2;
         SQL
@@ -19,7 +21,7 @@ describe 'Postgresql :read_committed transaction isolation level - unconsistent 
     def second_transaction
       result1 = nil
       result2 = nil
-      ActiveRecord::Base.transaction do
+      ActiveRecord::Base.transaction(isolation:) do
         result1 = exec_sql <<~SQL
           SELECT amount FROM accounts WHERE id = 2;
         SQL

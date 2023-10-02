@@ -8,9 +8,9 @@ module TransactionHelper
     end
   end
 
-  def transaction(pause: nil, &block)
+  def transaction(isolation: :read_committed, pause: nil, &block)
     result = nil
-    ActiveRecord::Base.transaction do
+    ActiveRecord::Base.transaction(isolation:) do
       result = block.call
       sleep(pause) unless pause.nil?
     end
