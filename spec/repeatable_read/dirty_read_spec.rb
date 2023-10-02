@@ -1,11 +1,11 @@
 require_relative '../spec_helper'
 
-describe 'Postgresql :read_committed transaction isolation level - dirty read problem' do
-  let(:isolation) { :read_committed }
+describe 'Postgresql :repeatable_read transaction isolation level - dirty read problem' do
+  let(:isolation) { :repeatable_read }
 
   context 'When we start two competitive transactions' do
     def first_transaction
-      transaction do
+      transaction(isolation:) do
         result = exec_sql <<~SQL
           UPDATE accounts SET amount = amount - 200 WHERE id = 1;
           SELECT amount FROM accounts WHERE client = 'alice'
@@ -31,7 +31,7 @@ describe 'Postgresql :read_committed transaction isolation level - dirty read pr
       execute_concurrent_queries(thread1, thread2)
 
       expect(amount(thread1)).to eq(800)
-      expect(amount(thread2)).to eq(1000) # <= Dirty Read is not possible on Read Committed isolation level
+      expect(amount(thread2)).to eq(1000) # <= Dirty Read is not possible on Repeatable Read isolation level
     end
   end
 end

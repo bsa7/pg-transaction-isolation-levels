@@ -24,9 +24,7 @@ describe 'Postgresql :read_committed transaction isolation level - unrepeatable 
       end
     end
 
-    it_behaves_like 'Shows the current transaction isolation level' do
-      let(:expected_isolation_level) { 'read committed' }
-    end
+    it_behaves_like 'Shows the current transaction isolation level'
 
     it 'During the time that elapses between check and update, other transactions may change the state of the record' do
       thread1, thread2 = initialize_threads
