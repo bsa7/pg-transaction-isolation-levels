@@ -1,8 +1,13 @@
 require 'pry'
 require 'rspec'
 require 'active_support/logger'
+require 'active_record'
+require 'rspec'
+
+require_relative './transaction_helper'
 
 include ActiveRecord::TestFixtures
+include TransactionHelper
 
 def exec_sql(sql)
   ::ActiveRecord::Base.connection.execute(sql)
@@ -35,6 +40,8 @@ end
 def database_config
   ci? ? './config/database.ci.yml' : './config/database.yml'
 end
+
+Dir[Pathname.new('./spec/shared/**/*.rb')].sort.each { |f| require f }
 
 configuration = YAML.load(ERB.new(File.read(database_config)).result)
 ActiveRecord::Base.configurations = configuration

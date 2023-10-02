@@ -1,16 +1,21 @@
-module ReadCommittedHelper
+module TransactionHelper
   def first_transaction
-    result = nil
-    ActiveRecord::Base.transaction do
-      result = exec_sql <<~SQL
+    transaction(pause: 1) do
+      exec_sql <<~SQL
         UPDATE accounts SET amount = amount - 200 WHERE id = 1;
         SELECT amount FROM accounts WHERE client = 'alice'
       SQL
+    end
+  end
 
-      sleep 1
+  def transaction(pause: nil, &block)
+    result = nil
+    ActiveRecord::Base.transaction do
+      result = block.call
+      sleep(pause) unless pause.nil?
     end
 
-    Thread.current[:result] = result.first
+    Thread.current[:result] = result
   end
 
   def initialize_threads
@@ -21,7 +26,7 @@ module ReadCommittedHelper
   end
 
   def amount(thread)
-    thread.value['amount']
+    thread.value.first['amount']
   end
 
   def execute_concurrent_queries(*threads)

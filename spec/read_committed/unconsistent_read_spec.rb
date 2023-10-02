@@ -1,15 +1,9 @@
-require 'active_record'
-require 'rspec'
 require_relative '../spec_helper'
-require_relative '../shared_examples'
-require_relative './read_committed_helper'
 
 describe 'Postgresql :read_committed transaction isolation level - unconsistent read problem' do
   context 'When we start two competitive transactions' do
-    include ReadCommittedHelper
-
     def first_transaction
-      ActiveRecord::Base.transaction do
+      transaction do
         exec_sql <<~SQL
           UPDATE accounts SET amount = amount - 100 WHERE id = 2;
         SQL
