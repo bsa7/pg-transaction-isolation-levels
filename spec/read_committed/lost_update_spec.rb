@@ -34,9 +34,7 @@ describe 'Postgresql :read_committed transaction isolation level - lost update p
       end
     end
 
-    it_behaves_like 'Shows the current transaction isolation level' do
-      let(:expected_isolation_level) { 'read committed' }
-    end
+    it_behaves_like 'Shows the current transaction isolation level'
 
     it 'The result of the second transaction will not be saved' do
       thread1, thread2 = initialize_threads

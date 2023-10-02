@@ -36,9 +36,7 @@ describe 'Postgresql :read_committed transaction isolation level - unconsistent 
       Thread.current[:result] = result1.first['amount'] + result2.first['amount']
     end
 
-    it_behaves_like 'Shows the current transaction isolation level' do
-      let(:expected_isolation_level) { 'read committed' }
-    end
+    it_behaves_like 'Shows the current transaction isolation level'
 
     it 'The second transaction reads the state of the second account and sees a new value' do
       thread1, thread2 = initialize_threads
